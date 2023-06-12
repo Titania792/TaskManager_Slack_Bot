@@ -1,0 +1,35 @@
+version: '3.3'
+
+services:
+  app:
+    build:
+      context: .
+    container_name: slackbot
+    depends_on:
+      - database
+    environment:
+      - SLACK_BOT_TOKEN=${SLACK_BOT_TOKEN}
+      - SLACK_APP_TOKEN=${SLACK_APP_TOKEN}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    volumes:
+      - ./app:/app
+    command: >
+      sh -c "python -m bot"
+
+  database:
+    image: mysql:latest
+    container_name: slackbot-db
+    environment:
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - ./tables.sql:/docker-entrypoint-initdb.d/script.sql
+      - db-data:/var/lib/mysql
+
+volumes:
+  db-data:
