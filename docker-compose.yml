@@ -2,11 +2,12 @@ version: '3.3'
 
 services:
   app:
+    # Configuración de construcción de la imagen del contenedor de la aplicación
     build:
-      context: .
-    container_name: slackbot
+      context: . # El contexto de construcción es el directorio actual
+    container_name: slackbot # Nombre del contenedor de la aplicación
     depends_on:
-      - database
+      - database # Dependencia en el servicio de la base de datos
     environment:
       - SLACK_BOT_TOKEN=${SLACK_BOT_TOKEN}
       - SLACK_APP_TOKEN=${SLACK_APP_TOKEN}
@@ -15,21 +16,21 @@ services:
       - MYSQL_HOST=${MYSQL_HOST}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
     volumes:
-      - ./app:/app
+      - ./app:/app # Comparte el directorio local "./app" con el directorio "/app" dentro del contenedor
     command: >
-      sh -c "python -m bot"
+      sh -c "python -m bot"  # Comando para ejecutar la aplicación en el contenedor
 
   database:
-    image: mysql:latest
-    container_name: slackbot-db
+    image: mysql:latest # Imagen de MySQL se utiliza para el servicio de la base de datos
+    container_name: slackbot-db # Nombre del contenedor de la base de datos
     environment:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     volumes:
-      - ./tables.sql:/docker-entrypoint-initdb.d/script.sql
-      - db-data:/var/lib/mysql
+      - ./tables.sql:/docker-entrypoint-initdb.d/script.sql # Utilizamos el archivo "tables.sql" como script de inicialización de la base de datos
+      - db-data:/var/lib/mysql # Se crea un volumen para almacenar los datos de la base de datos
 
 volumes:
-  db-data:
+  db-data: # Define el volumen llamado "db-data"

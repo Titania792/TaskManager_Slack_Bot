@@ -6,17 +6,19 @@ from datetime import datetime
 from slack_sdk.errors import SlackApiError
 import time
 
+# Obtener tokens de autenticación desde variables de entorno
 SLACK_BOT_TOKEN = os.getenv('SLACK_BOT_TOKEN')
 SLACK_APP_TOKEN = os.getenv('SLACK_APP_TOKEN')
 
+# Crear una instancia de la aplicación Bolt
 app = App(token=SLACK_BOT_TOKEN)
 
+# Configuración de las credenciales de MySQL
 MYSQL_HOST = os.getenv('MYSQL_HOST')
 MYSQL_USER = os.getenv('MYSQL_USER')
 MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD')
 MYSQL_DATABASE = os.getenv('MYSQL_DATABASE')
 
-# Configuracion de las credenciales de MySQL y Slack
 db_config = {
     'user': MYSQL_USER,
     'password': MYSQL_PASSWORD,
@@ -25,6 +27,7 @@ db_config = {
     'raise_on_warnings': True
 }
 
+# Intentar establecer la conexión a la base de datos con un máximo de 3 intentos
 attempts = 0
 
 while attempts < 3:
@@ -39,12 +42,12 @@ while attempts < 3:
 
 cursor = cnx.cursor()
 
-
+# Comando de Testeo
 @app.event("app_mention")
 def mention_handler(body, say):
 	say('Hello World!')
 
-# The echo command simply echoes on command Test command
+# Comando /echo: Repite el texto especificado
 @app.command("/echo")
 def repeat_text(ack, respond, command):
 	# Acknowledge command request

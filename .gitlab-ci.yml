@@ -1,20 +1,26 @@
+# Definimos las etapas del pipeline
 stages:
   - build
   - deploy
 
+# Variables utilizadas en el pipeline
 variables:
   DOCKER_IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
 
+# Antes de ejecutar cualquier trabajo, tenemos que autenticarnos en el registro de contenedores
 before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
 build:
   stage: build
   script:
+    # Construimos la imagen del contenedor
     - docker-compose build
+    # Empujamos la imagen al registro de contenedores
     - docker push $DOCKER_IMAGE_TAG
 
 deploy:
   stage: deploy
   script:
+    # Iniciamos los contenedores definidos en el archivo docker-compose.yml
     - docker-compose up
